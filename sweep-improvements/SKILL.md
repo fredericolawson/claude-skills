@@ -1,6 +1,6 @@
 ---
 name: sweep-improvements
-description: Sweep one app's open improvements against the code. Close what has shipped, close the built part of a partly built record and move the rest to a new one, rewrite records that have gone stale or grown long, and split records that hold more than one ask. Run by hand with /sweep-improvements; never on a commit or a push.
+description: Sweep one app's open improvements against the code. Close what has shipped, close the built part of a partly built record and move the rest to a new one, rewrite records that have gone stale or grown long, split records that hold more than one ask, and write a question into a record whose ask is unclear against the code. Run by hand with /sweep-improvements; never on a commit or a push.
 disable-model-invocation: true
 argument-hint: "[app name] [improvement numbers]"
 ---
@@ -29,6 +29,11 @@ files a new improvement only when it splits an existing one (step 5).
 Call `list_improvements` once for each of `new`, `partial` and `hold`. Call
 `get_improvement` on every item that has notes, because a note may have
 changed or dropped part of the ask. Leave done improvements alone.
+
+A "### Questions" section at the bottom of the details is one an earlier
+sweep left (step 6). A question that a note or the rest of the details now
+answers is settled: treat the answer as part of the ask. One with no answer
+is still open: leave it and do not ask it again.
 
 Where the app's entries carry `started` (CJ hub does), a record with
 `started: true` is one someone is working on now, in `start` or `partial`.
@@ -61,7 +66,8 @@ is left moves to a new improvement. This includes records already in
 the rest now, so it stays in `partial` and the sweep only adds a note on
 what is built.
 
-When you cannot tell, say so and leave the item as it is.
+When you cannot tell, leave the item as it is and write the question into
+its details (step 6).
 
 ## 4. Decide which records to rewrite
 
@@ -81,11 +87,13 @@ or slowed down. Rewrite for these reasons only:
 Keep to these limits:
 
 - Keep the requester's meaning. If you are unsure what they meant, leave the
-  text and flag it.
+  text and write the question under it (step 6).
 - Keep the "Why" and the "Source" sections; shorten them, do not remove them.
 - Follow `add_improvement`'s writing rule: "### What", "### Why", "### Notes"
   and "### Source" as they apply, with the separate things to build as a task
-  list under What.
+  list under What. A "### Questions" section (step 6) stays last.
+- When a question under "### Questions" has been answered, work the answer
+  into What and delete the question; delete the heading with the last one.
 - Progress still goes in a note, never in the details. The one progress edit
   to details is ticking a built task (`- [ ]` to `- [x]`).
 - Details keep no history and notes are permanent. When a rewrite removes
@@ -128,14 +136,33 @@ How to split:
 ## 6. Apply without asking
 
 Do not propose and wait. Running the sweep is the go-ahead for every
-complete, note, rewrite and split it decides on (Freddie, 2026-11-13), so
-apply each one as soon as the checks in steps 3 to 5 are done.
+complete, note, rewrite, split and question it decides on (Freddie,
+2026-11-13), so apply each one as soon as the checks in steps 3 to 5 are
+done.
 
 The records belong to the team, and `complete_improvement` and
 `add_improvement` both post to their Slack, so a wrong write is seen at
-once. Write only what the code or a note settles. Where you are unsure of
-a verdict or of what the requester meant, write nothing on that record and
-name it in the report with the question that would settle it.
+once. Write only what the code or a note settles.
+
+Where you are unsure of a verdict or of what the requester meant, leave
+the rest of that record as it is and write the question into its details,
+under a "### Questions" heading at the very bottom, so the uncertainty is
+kept with the improvement and not only in this chat (Freddie, 2026-11-19).
+In the details, not a note: a note is permanent, and a question goes away
+once it is answered. Nobody is asked to answer it at once: Freddie may take
+it to the requester, and the session that builds the improvement asks him
+then.
+
+- Ask only what changes the verdict or what would be built: an ask that
+  reads two ways against the app as it is now, a page or record it names
+  that the app does not have, a part that contradicts a note or another
+  improvement. Not wording you would merely have put differently.
+- One list item a question: what is unclear, what the app does today, and
+  the readings it could mean, in the app's own words.
+- Add to a "### Questions" section that is already there; skip a question
+  it already asks (step 2).
+- Adding the section is the one edit to details a started record takes; a
+  record on hold takes it like any other.
 
 ## 7. How to apply each
 
@@ -152,6 +179,8 @@ name it in the report with the question that would settle it.
 - **Split:** `add_improvement` for each new record first, so their numbers
   are known. Then rewrite the original with `update_improvement` and add the
   note naming those numbers. Complete the original if its own ask shipped.
+- **Question:** `update_improvement` with the details as they were plus the
+  "### Questions" section at the bottom. No note.
 
 The people who read these do not read code. Write every note, every
 rewrite and every new record for them.
@@ -160,7 +189,7 @@ rewrite and every new record for them.
 
 Show one table of every open item: number as a link, title, verdict,
 whether it is started, and what was done (completed, noted, rewritten,
-split, or left). Under it, give each closing note and progress note as
-written, and for each rewrite and split the old title beside the new one,
-with the new numbers for a split. Name any item you could not judge and
-what would settle it.
+split, questioned, or left). Under it, give each closing note, progress
+note and question as written, and for each rewrite and split the old
+title beside the new one, with the new numbers for a split. List the
+records whose earlier questions are still unanswered.
