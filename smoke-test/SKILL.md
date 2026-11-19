@@ -60,7 +60,14 @@ One check per page or behaviour. Each has:
 - **Pass:** what a visitor sees when it works;
 - **Fail:** what they see when it does not.
 
-Write pass and fail as things seen on the page, never as code. Use real URLs
+Write pass and fail as things seen on the page, never as code. Describe the
+shape of what appears, not a value you have not seen: "a caption, a colon and
+a value" passes whatever the store's data says, while a guessed example
+("Wrist Length") fails a page that works. Name an exact value only when the
+session set it, and ask the browser to report the text it saw, so a wrong
+guess shows in the answer. A check that fails because its own wording was
+wrong is not a failure of the site: correct the wording, run it again, and
+say so in the report. Use real URLs
 you know exist; where you do not know one, have the browser reach the page by
 clicking from a page you do know. Keep to what the session could have broken:
 six checks or fewer is usual. With more, split them over two runs.
